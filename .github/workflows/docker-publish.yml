@@ -13,6 +13,20 @@ jobs:
       - name: Checkout kode
         uses: actions/checkout@v4
 
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restore pakker
+        run: dotnet restore
+
+      - name: Byg
+        run: dotnet build --no-restore -c Release
+
+      - name: Kør tests
+        run: dotnet test --no-build -c Release --verbosity normal
+
       - name: Log ind på Docker Hub
         uses: docker/login-action@v3
         with:
