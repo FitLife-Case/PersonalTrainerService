@@ -51,7 +51,7 @@ public class PersonalTrainerController : ControllerBase
         return Ok(trainer);
     }
 
-    /// <summary>Hent alle trænere på et bestemt center</summary>
+    /// <summary>Hent alle1 trænere på et bestemt center</summary>
     [HttpGet("api/trainers/center/{centerId}")]
     [ProducesResponseType(typeof(List<Trainer>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetTrainersByCenter(Guid centerId, CancellationToken ct)
