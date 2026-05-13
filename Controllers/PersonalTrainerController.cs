@@ -27,7 +27,7 @@ public class PersonalTrainerController : ControllerBase
     }
 
     // ──────────────────────────────────────────────────────────────────────────
-    // TRAINER ENDPOINTS
+    // TRAINER ENDPOINTS1
     // ──────────────────────────────────────────────────────────────────────────
 
     /// <summary>Hent alle trænere</summary>
