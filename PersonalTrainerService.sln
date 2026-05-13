@@ -1,0 +1,24 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PersonalTrainerService", "PersonalTrainerService.csproj", "{06308ADD-FC7E-9E62-6351-F388264BB729}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{06308ADD-FC7E-9E62-6351-F388264BB729}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{06308ADD-FC7E-9E62-6351-F388264BB729}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{06308ADD-FC7E-9E62-6351-F388264BB729}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{06308ADD-FC7E-9E62-6351-F388264BB729}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D70EA5B6-91B2-4C62-B270-5C2A429AC33F}
+	EndGlobalSection
+EndGlobal
