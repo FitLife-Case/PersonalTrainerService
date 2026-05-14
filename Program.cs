@@ -79,6 +79,7 @@ builder.Services.AddScoped<INutritionPlanService, NutritionPlanService>();
 
 var app = builder.Build();
 
+app.UsePathBase("/personaltrainer");
 // ── 10. Middleware pipeline ───────────────────────────────────────────────
 
 // Scalar tilgængeligt i alle miljøer så det virker i Docker
