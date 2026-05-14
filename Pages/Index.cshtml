@@ -1,0 +1,49 @@
+@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Trænere";
+}
+
+<div class="container mt-4">
+    <h1 class="mb-4">FitLife Digital – Træneroversigt</h1>
+
+    @if (Model.Trainers == null || !Model.Trainers.Any())
+    {
+        <div class="alert alert-info">Ingen trænere fundet.</div>
+    }
+    else
+    {
+        <div class="row">
+            @foreach (var trainer in Model.Trainers)
+            {
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">@trainer.FirstName @trainer.LastName</h5>
+                            <p class="card-text text-muted">@trainer.Bio</p>
+                            <hr />
+                            <p><strong>Erfaring:</strong> @trainer.YearsOfExperience år</p>
+                            <p><strong>Email:</strong> @trainer.Email</p>
+                            <p><strong>Telefon:</strong> @trainer.PhoneNumber</p>
+                            @if (trainer.Specialties != null && trainer.Specialties.Any())
+                            {
+                                <p><strong>Specialer:</strong></p>
+                                <div class="d-flex flex-wrap gap-1">
+                                    @foreach (var specialty in trainer.Specialties)
+                                    {
+                                        <span class="badge bg-primary">@specialty</span>
+                                    }
+                                </div>
+                            }
+                        </div>
+                        <div class="card-footer">
+                            <small class="text-muted">
+                                @(trainer.IsActive ? "✅ Aktiv" : "❌ Inaktiv")
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

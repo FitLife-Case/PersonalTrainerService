@@ -47,6 +47,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddAuthorization();
 
+// ── Razor pages ──
+builder.Services.AddRazorPages();
+
 // ── 4. OpenAPI ────────────────────────────────────────────────────────────
 builder.Services.AddOpenApi();
 
@@ -81,6 +84,7 @@ var app = builder.Build();
 // Scalar tilgængeligt i alle miljøer så det virker i Docker
 app.MapOpenApi();
 app.MapScalarApiReference();
+app.MapRazorPages();
 
 app.UseAuthentication();
 app.UseAuthorization();
