@@ -1,5 +1,66 @@
-@page
-@model IndexModel
+<%-- TRAENINGSPLANER --%>
+<div class="tab-pane fade" id="trainingplans">
+    <div class="card p-3 mb-4">
+        <h5>Søg planer for traener</h5>
+        <form method="get" asp-page-handler="TrainerPlans">
+            <div class="row g-2">
+                <div class="col-md-6">
+                    <input class="form-control" name="trainerId" placeholder="Traener ID" required />
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-secondary" type="submit">Hent planer</button>
+                </div>
+            </div>
+        </form>
+    </div>
 
-<h1>Test</h1>
-<p>Razor Pages virker</p>
+    <div class="card p-3 mb-4">
+        <h5>Opret traeningsplan</h5>
+        <form method="post" asp-page-handler="CreateTrainingPlan">
+            <div class="row g-2">
+                <div class="col-md-6">
+                    <input class="form-control" asp-for="NewTrainingPlan.TrainerId" placeholder="Traener ID" required />
+                </div>
+                <div class="col-md-6">
+                    <input class="form-control" asp-for="NewTrainingPlan.MemberId" placeholder="Medlem ID" required />
+                </div>
+                <div class="col-md-6">
+                    <input class="form-control" asp-for="NewTrainingPlan.Name" placeholder="Plannavn" required />
+                </div>
+                <div class="col-md-6">
+                    <input class="form-control" asp-for="NewTrainingPlan.Description" placeholder="Beskrivelse" />
+                </div>
+                <div class="col-md-6">
+                    <input class="form-control" asp-for="NewTrainingPlan.StartDate" type="date" />
+                </div>
+                <div class="col-md-6">
+                    <input class="form-control" asp-for="NewTrainingPlan.EndDate" type="date" />
+                </div>
+            </div>
+            <button class="btn btn-primary mt-2" type="submit">Opret</button>
+        </form>
+    </div>
+
+    <div class="row">
+        @foreach (var plan in Model.TrainingPlans)
+        {
+            <div class="col-md-4 mb-3">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5>@plan.Name</h5>
+                        <p class="text-muted">@plan.Description</p>
+                        <p><strong>Start:</strong> @plan.StartDate</p>
+                        <p><strong>Slut:</strong> @plan.EndDate</p>
+                        <span class="badge bg-info">@plan.Status</span>
+                    </div>
+                    <div class="card-footer">
+                        <form method="post" asp-page-handler="DeleteTrainingPlan">
+                            <input type="hidden" name="id" value="@plan.Id" />
+                            <button class="btn btn-sm btn-danger" type="submit">Slet</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
