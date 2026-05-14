@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("PersonalTrainerService")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+45c55e49ddca2a3644a48a4df2d8d0b54ad291a9")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3a5fd4bbb8f77a5737db0aa327b4f8c0744f2f7f")]
 [assembly: System.Reflection.AssemblyProductAttribute("PersonalTrainerService")]
 [assembly: System.Reflection.AssemblyTitleAttribute("PersonalTrainerService")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

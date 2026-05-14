@@ -221,3 +221,5 @@ C:\Users\bruger\PersonligTrainerService\PersonalTrainerService\bin\Debug\net10.0
 C:\Users\bruger\PersonligTrainerService\PersonalTrainerService\bin\Debug\net10.0\zh-Hant\Microsoft.TestPlatform.CommunicationUtilities.resources.dll
 C:\Users\bruger\PersonligTrainerService\PersonalTrainerService\bin\Debug\net10.0\zh-Hant\Microsoft.TestPlatform.CrossPlatEngine.resources.dll
 C:\Users\bruger\PersonligTrainerService\PersonalTrainerService\bin\Debug\net10.0\zh-Hant\Microsoft.VisualStudio.TestPlatform.Common.resources.dll
+C:\Users\bruger\PersonligTrainerService\PersonalTrainerService\obj\Debug\net10.0\PersonalTrainerService.RazorAssemblyInfo.cache
+C:\Users\bruger\PersonligTrainerService\PersonalTrainerService\obj\Debug\net10.0\PersonalTrainerService.RazorAssemblyInfo.cs
