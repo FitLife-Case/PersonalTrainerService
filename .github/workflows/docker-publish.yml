@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - develop
+      - main
 
 jobs:
   build-and-push:
@@ -18,16 +19,20 @@ jobs:
         with:
           dotnet-version: '10.0.x'
 
+      - name: Saet version
+        id: version
+        run: echo "VERSION=1.0.${{ github.run_number }}" >> $GITHUB_OUTPUT
+
       - name: Restore pakker
         run: dotnet restore
 
       - name: Byg
-        run: dotnet build --no-restore -c Release
+        run: dotnet build --no-restore -c Release /p:Version=${{ steps.version.outputs.VERSION }}
 
-      - name: Kør tests
+      - name: Koer tests
         run: dotnet test --no-build -c Release --verbosity normal
 
-      - name: Log ind på Docker Hub
+      - name: Log ind paa Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -45,4 +50,6 @@ jobs:
           context: .
           push: true
           platforms: linux/amd64,linux/arm64
-          tags: awesomebromonus/personaltrainer-service:latest
+          tags: |
+            awesomebromonus/personaltrainer-service:latest
+            awesomebromonus/personaltrainer-service:${{ steps.version.outputs.VERSION }}
