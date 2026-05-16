@@ -30,22 +30,22 @@
                     @Html.AntiForgeryToken()
                     <div class="row g-2">
                         <div class="col-md-6">
-                            <input class="form-control" asp-for="NewTrainer.FirstName" placeholder="Fornavn" required />
+                            <input class="form-control" name="NewTrainer.FirstName" placeholder="Fornavn" required />
                         </div>
                         <div class="col-md-6">
-                            <input class="form-control" asp-for="NewTrainer.LastName" placeholder="Efternavn" required />
+                            <input class="form-control" name="NewTrainer.LastName" placeholder="Efternavn" required />
                         </div>
                         <div class="col-md-6">
-                            <input class="form-control" asp-for="NewTrainer.Email" placeholder="Email" required />
+                            <input class="form-control" name="NewTrainer.Email" placeholder="Email" required />
                         </div>
                         <div class="col-md-6">
-                            <input class="form-control" asp-for="NewTrainer.PhoneNumber" placeholder="Telefon" />
+                            <input class="form-control" name="NewTrainer.PhoneNumber" placeholder="Telefon" />
                         </div>
                         <div class="col-md-6">
-                            <input class="form-control" asp-for="NewTrainer.YearsOfExperience" placeholder="Erfaringsaar" type="number" />
+                            <input class="form-control" name="NewTrainer.YearsOfExperience" placeholder="Erfaringsaar" type="number" />
                         </div>
                         <div class="col-12">
-                            <textarea class="form-control" asp-for="NewTrainer.Bio" placeholder="Bio" rows="2"></textarea>
+                            <textarea class="form-control" name="NewTrainer.Bio" placeholder="Bio" rows="2"></textarea>
                         </div>
                     </div>
                     <button class="btn btn-primary mt-2" type="submit">Opret</button>
@@ -108,16 +108,16 @@
                             <input class="form-control" name="NewTrainingPlan.MemberId" placeholder="Medlem ID" required />
                         </div>
                         <div class="col-md-6">
-                            <input class="form-control" asp-for="NewTrainingPlan.Name" placeholder="Plannavn" required />
+                            <input class="form-control" name="NewTrainingPlan.Name" placeholder="Plannavn" required />
                         </div>
                         <div class="col-md-6">
-                            <input class="form-control" asp-for="NewTrainingPlan.Description" placeholder="Beskrivelse" />
+                            <input class="form-control" name="NewTrainingPlan.Description" placeholder="Beskrivelse" />
                         </div>
                         <div class="col-md-6">
-                            <input class="form-control" asp-for="NewTrainingPlan.StartDate" type="date" />
+                            <input class="form-control" name="NewTrainingPlan.StartDate" type="date" />
                         </div>
                         <div class="col-md-6">
-                            <input class="form-control" asp-for="NewTrainingPlan.EndDate" type="date" />
+                            <input class="form-control" name="NewTrainingPlan.EndDate" type="date" />
                         </div>
                     </div>
                     <button class="btn btn-primary mt-2" type="submit">Opret</button>
@@ -176,16 +176,16 @@
                             <input class="form-control" name="NewNutritionPlan.MemberId" placeholder="Medlem ID" required />
                         </div>
                         <div class="col-md-6">
-                            <input class="form-control" asp-for="NewNutritionPlan.Name" placeholder="Plannavn" required />
+                            <input class="form-control" name="NewNutritionPlan.Name" placeholder="Plannavn" required />
                         </div>
                         <div class="col-md-6">
-                            <input class="form-control" asp-for="NewNutritionPlan.DailyCalorieTarget" placeholder="Daglige kalorier" type="number" />
+                            <input class="form-control" name="NewNutritionPlan.DailyCalorieTarget" placeholder="Daglige kalorier" type="number" />
                         </div>
                         <div class="col-md-6">
-                            <input class="form-control" asp-for="NewNutritionPlan.StartDate" type="date" />
+                            <input class="form-control" name="NewNutritionPlan.StartDate" type="date" />
                         </div>
                         <div class="col-md-6">
-                            <input class="form-control" asp-for="NewNutritionPlan.EndDate" type="date" />
+                            <input class="form-control" name="NewNutritionPlan.EndDate" type="date" />
                         </div>
                     </div>
                     <button class="btn btn-primary mt-2" type="submit">Opret</button>
