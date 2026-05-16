@@ -68,7 +68,7 @@
                                 </span>
                             </div>
                             <div class="card-footer">
-                                <form method="post" asp-page-handler="DeleteTrainer">
+                                <form method="post" asp-page-handler="DeleteTrainer" action="/personaltrainer/">
                                     <input type="hidden" name="id" value="@trainer.Id" />
                                     <button class="btn btn-sm btn-danger" type="submit">Slet</button>
                                 </form>
@@ -82,7 +82,7 @@
         <div class="tab-pane fade" id="trainingplans">
             <div class="card p-3 mb-4">
                 <h5>Soeg planer for traener</h5>
-                <form method="get" asp-page-handler="TrainerPlans">
+                <form method="get" asp-page-handler="TrainerPlans" action="/personaltrainer/">
                     <div class="row g-2">
                         <div class="col-md-6">
                             <input class="form-control" name="trainerId" placeholder="Traener ID" required />
@@ -96,7 +96,7 @@
 
             <div class="card p-3 mb-4">
                 <h5>Opret traeningsplan</h5>
-                <form method="post" asp-page-handler="CreateTrainingPlan">
+                <form method="post" asp-page-handler="CreateTrainingPlan" action="/personaltrainer/">
                     <div class="row g-2">
                         <div class="col-md-6">
                             <input class="form-control" name="NewTrainingPlan.TrainerId" placeholder="Traener ID" required />
@@ -134,7 +134,7 @@
                                 <span class="badge bg-info">@plan.Status</span>
                             </div>
                             <div class="card-footer">
-                                <form method="post" asp-page-handler="DeleteTrainingPlan">
+                                <form method="post" asp-page-handler="DeleteTrainingPlan" action="/personaltrainer/">
                                     <input type="hidden" name="id" value="@plan.Id" />
                                     <button class="btn btn-sm btn-danger" type="submit">Slet</button>
                                 </form>
@@ -148,7 +148,7 @@
         <div class="tab-pane fade" id="nutritionplans">
             <div class="card p-3 mb-4">
                 <h5>Soeg kostplaner for traener</h5>
-                <form method="get" asp-page-handler="TrainerPlans">
+                <form method="get" asp-page-handler="TrainerPlans" action="/personaltrainer/">
                     <div class="row g-2">
                         <div class="col-md-6">
                             <input class="form-control" name="trainerId" placeholder="Traener ID" required />
@@ -162,7 +162,7 @@
 
             <div class="card p-3 mb-4">
                 <h5>Opret kostplan</h5>
-                <form method="post" asp-page-handler="CreateNutritionPlan">
+                <form method="post" asp-page-handler="CreateNutritionPlan" action="/personaltrainer/">
                     <div class="row g-2">
                         <div class="col-md-6">
                             <input class="form-control" name="NewNutritionPlan.TrainerId" placeholder="Traener ID" required />
@@ -200,7 +200,7 @@
                                 <span class="badge bg-info">@plan.Status</span>
                             </div>
                             <div class="card-footer">
-                                <form method="post" asp-page-handler="DeleteNutritionPlan">
+                                <form method="post" asp-page-handler="DeleteNutritionPlan" action="/personaltrainer/">
                                     <input type="hidden" name="id" value="@plan.Id" />
                                     <button class="btn btn-sm btn-danger" type="submit">Slet</button>
                                 </form>
