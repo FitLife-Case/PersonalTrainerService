@@ -56,38 +56,38 @@ public class IndexModel : PageModel
         NewTrainer.Specialties = new();
         NewTrainer.WorksAtCenterIds = new();
         await _trainerService.CreateAsync(NewTrainer);
-        return RedirectToPage();
+        return Redirect("/personaltrainer/");
     }
 
     public async Task<IActionResult> OnPostDeleteTrainerAsync(Guid id)
     {
         await _trainerService.DeleteAsync(id);
-        return RedirectToPage();
+        return Redirect("/personaltrainer/");
     }
 
     public async Task<IActionResult> OnPostCreateTrainingPlanAsync()
     {
         NewTrainingPlan.Exercises = new();
         await _trainingPlanService.CreateAsync(NewTrainingPlan);
-        return RedirectToPage();
+        return Redirect("/personaltrainer/");
     }
 
     public async Task<IActionResult> OnPostDeleteTrainingPlanAsync(Guid id)
     {
         await _trainingPlanService.DeleteAsync(id);
-        return RedirectToPage();
+        return Redirect("/personaltrainer/");
     }
 
     public async Task<IActionResult> OnPostCreateNutritionPlanAsync()
     {
         NewNutritionPlan.Meals = new();
         await _nutritionPlanService.CreateAsync(NewNutritionPlan);
-        return RedirectToPage();
+        return Redirect("/personaltrainer/");
     }
 
     public async Task<IActionResult> OnPostDeleteNutritionPlanAsync(Guid id)
     {
         await _nutritionPlanService.DeleteAsync(id);
-        return RedirectToPage();
+        return Redirect("/personaltrainer/");
     }
 }
