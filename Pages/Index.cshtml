@@ -27,6 +27,7 @@
             <div class="card p-3 mb-4">
                 <h5>Opret traener</h5>
                 <form method="post" action="/personaltrainer/?handler=CreateTrainer">
+                    @Html.AntiForgeryToken()
                     <div class="row g-2">
                         <div class="col-md-6">
                             <input class="form-control" asp-for="NewTrainer.FirstName" placeholder="Fornavn" required />
@@ -69,6 +70,7 @@
                             </div>
                             <div class="card-footer">
                                 <form method="post" action="/personaltrainer/?handler=DeleteTrainer">
+                                    @Html.AntiForgeryToken()
                                     <input type="hidden" name="id" value="@trainer.Id" />
                                     <button class="btn btn-sm btn-danger" type="submit">Slet</button>
                                 </form>
@@ -97,6 +99,7 @@
             <div class="card p-3 mb-4">
                 <h5>Opret traeningsplan</h5>
                 <form method="post" action="/personaltrainer/?handler=CreateTrainingPlan">
+                    @Html.AntiForgeryToken()
                     <div class="row g-2">
                         <div class="col-md-6">
                             <input class="form-control" name="NewTrainingPlan.TrainerId" placeholder="Traener ID" required />
@@ -135,6 +138,7 @@
                             </div>
                             <div class="card-footer">
                                 <form method="post" action="/personaltrainer/?handler=DeleteTrainingPlan">
+                                    @Html.AntiForgeryToken()
                                     <input type="hidden" name="id" value="@plan.Id" />
                                     <button class="btn btn-sm btn-danger" type="submit">Slet</button>
                                 </form>
@@ -163,6 +167,7 @@
             <div class="card p-3 mb-4">
                 <h5>Opret kostplan</h5>
                 <form method="post" action="/personaltrainer/?handler=CreateNutritionPlan">
+                    @Html.AntiForgeryToken()
                     <div class="row g-2">
                         <div class="col-md-6">
                             <input class="form-control" name="NewNutritionPlan.TrainerId" placeholder="Traener ID" required />
@@ -201,6 +206,7 @@
                             </div>
                             <div class="card-footer">
                                 <form method="post" action="/personaltrainer/?handler=DeleteNutritionPlan">
+                                    @Html.AntiForgeryToken()
                                     <input type="hidden" name="id" value="@plan.Id" />
                                     <button class="btn btn-sm btn-danger" type="submit">Slet</button>
                                 </form>
