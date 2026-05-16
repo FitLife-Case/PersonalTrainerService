@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.IdentityModel.Tokens;
 using MongoDB.Driver;
 using NLog.Web;
@@ -79,10 +80,24 @@ builder.Services.AddScoped<INutritionPlanService, NutritionPlanService>();
 
 var app = builder.Build();
 
-app.UsePathBase("/personaltrainer");
 // ── 10. Middleware pipeline ───────────────────────────────────────────────
+app.UseForwardedHeaders(new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.All
+});
 
-// Scalar tilgængeligt i alle miljøer så det virker i Docker
+app.Use(async (context, next) =>
+{
+    var prefix = context.Request.Headers["X-Forwarded-Prefix"].FirstOrDefault();
+    if (!string.IsNullOrEmpty(prefix))
+    {
+        context.Request.PathBase = new PathString(prefix);
+    }
+    await next();
+});
+
+app.UsePathBase("/personaltrainer");
+
 app.MapOpenApi();
 app.MapScalarApiReference();
 app.MapRazorPages();
