@@ -8,6 +8,7 @@ using System.Text;
 using FitLife.PersonalTrainer.API.Repositories;
 using FitLife.PersonalTrainer.API.Services;
 using Scalar.AspNetCore;
+using Microsoft.AspNetCore.DataProtection;
 
 var builder = WebApplication.CreateBuilder(args);
 
