@@ -104,6 +104,10 @@
               "target": "Package",
               "version": "[2.14.11, )"
             },
+            "VaultSharp": {
+              "target": "Package",
+              "version": "[1.17.5.1, )"
+            },
             "coverlet.collector": {
               "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
               "suppressParent": "All",

@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "vXf2FX/swTg=",
+  "dgSpecHash": "D1pbTaxQqSA=",
   "success": true,
   "projectFilePath": "/home/bromus/Eksamens4Sem/PersonalTrainerService/PersonalTrainerService.csproj",
   "expectedPackageFiles": [
@@ -50,6 +50,7 @@
     "/home/bromus/.nuget/packages/sharpcompress/0.30.1/sharpcompress.0.30.1.nupkg.sha512",
     "/home/bromus/.nuget/packages/snappier/1.3.1/snappier.1.3.1.nupkg.sha512",
     "/home/bromus/.nuget/packages/system.identitymodel.tokens.jwt/8.0.1/system.identitymodel.tokens.jwt.8.0.1.nupkg.sha512",
+    "/home/bromus/.nuget/packages/vaultsharp/1.17.5.1/vaultsharp.1.17.5.1.nupkg.sha512",
     "/home/bromus/.nuget/packages/xunit/2.9.3/xunit.2.9.3.nupkg.sha512",
     "/home/bromus/.nuget/packages/xunit.abstractions/2.0.3/xunit.abstractions.2.0.3.nupkg.sha512",
     "/home/bromus/.nuget/packages/xunit.analyzers/1.18.0/xunit.analyzers.1.18.0.nupkg.sha512",
