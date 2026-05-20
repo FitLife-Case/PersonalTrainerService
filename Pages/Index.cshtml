@@ -69,13 +69,35 @@
                                 </span>
                             </div>
                             <div class="card-footer">
-                                <form method="post" action="/personaltrainer/?handler=DeleteTrainer">
-                                    @Html.AntiForgeryToken()
-                                    <input type="hidden" name="id" value="@trainer.Id" />
-                                    <button class="btn btn-sm btn-danger" type="submit">Slet</button>
-                                </form>
-                            </div>
-                        </div>
+    <div class="mb-2">
+        <input class="form-control form-control-sm booking-member-id-@trainer.Id" 
+               placeholder="Medlem ID" />
+    </div>
+    <div class="mb-2">
+        <input class="form-control form-control-sm booking-member-name-@trainer.Id" 
+               placeholder="Dit navn" />
+    </div>
+    <div class="mb-2">
+        <input class="form-control form-control-sm booking-start-@trainer.Id" 
+               type="datetime-local" />
+    </div>
+    <div class="mb-2">
+        <input class="form-control form-control-sm booking-centre-@trainer.Id" 
+               placeholder="Center" />
+    </div>
+    <div class="d-flex gap-2">
+        <button class="btn btn-sm btn-primary flex-grow-1"
+            onclick="bookTrainer('@trainer.Id', '@trainer.FirstName @trainer.LastName', this)">
+            Book træner
+        </button>
+        <form method="post" action="/personaltrainer/?handler=DeleteTrainer">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="id" value="@trainer.Id" />
+            <button class="btn btn-sm btn-danger" type="submit">Slet</button>
+        </form>
+    </div>
+</div>
+</div>
                     </div>
                 }
             </div>
@@ -218,6 +240,47 @@
         </div>
 
     </div>
+<script>
+async function bookTrainer(trainerId, trainerName, btn) {
+    const memberId   = document.querySelector('.booking-member-id-'   + trainerId).value;
+    const memberName = document.querySelector('.booking-member-name-' + trainerId).value;
+    const start      = document.querySelector('.booking-start-'       + trainerId).value;
+    const centre     = document.querySelector('.booking-centre-'      + trainerId).value;
+
+    if (!memberId || !memberName || !start || !centre) {
+        alert('Udfyld alle felter');
+        return;
+    }
+
+    const payload = {
+        memberId:      memberId,
+        memberName:    memberName,
+        bookingType:   1,
+        trainerId:     trainerId,
+        trainerName:   trainerName,
+        trainingStart: start,
+        centreLocation: centre
+    };
+
+    try {
+        const response = await fetch('http://localhost:8082/api/bookings', {
+            method:  'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body:    JSON.stringify(payload)
+        });
+
+        if (response.ok) {
+            btn.textContent = '✓ Booket!';
+            btn.classList.replace('btn-primary', 'btn-success');
+            btn.disabled = true;
+        } else {
+            alert('Booking fejlede — prøv igen');
+        }
+    } catch (err) {
+        alert('Kunne ikke kontakte BookingService');
+    }
+}
+</script>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
