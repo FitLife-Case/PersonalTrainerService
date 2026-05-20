@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\lukas\\workspace\\FitLife\\PersonalTrainerService\\PersonalTrainerService.csproj": {}
+    "/home/bromus/Eksamens4Sem/PersonalTrainerService/PersonalTrainerService.csproj": {}
   },
   "projects": {
-    "C:\\Users\\lukas\\workspace\\FitLife\\PersonalTrainerService\\PersonalTrainerService.csproj": {
+    "/home/bromus/Eksamens4Sem/PersonalTrainerService/PersonalTrainerService.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\lukas\\workspace\\FitLife\\PersonalTrainerService\\PersonalTrainerService.csproj",
+        "projectUniqueName": "/home/bromus/Eksamens4Sem/PersonalTrainerService/PersonalTrainerService.csproj",
         "projectName": "PersonalTrainerService",
-        "projectPath": "C:\\Users\\lukas\\workspace\\FitLife\\PersonalTrainerService\\PersonalTrainerService.csproj",
-        "packagesPath": "C:\\Users\\lukas\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\lukas\\workspace\\FitLife\\PersonalTrainerService\\obj\\",
+        "projectPath": "/home/bromus/Eksamens4Sem/PersonalTrainerService/PersonalTrainerService.csproj",
+        "packagesPath": "/home/bromus/.nuget/packages/",
+        "outputPath": "/home/bromus/Eksamens4Sem/PersonalTrainerService/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\lukas\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "/home/bromus/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net10.0"
@@ -38,7 +38,7 @@
           "auditLevel": "low",
           "auditMode": "all"
         },
-        "SdkAnalysisLevel": "10.0.200"
+        "SdkAnalysisLevel": "10.0.100"
       },
       "frameworks": {
         "net10.0": {
@@ -144,7 +144,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.202/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "/home/bromus/.dotnet/sdk/10.0.103/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.AspNetCore": "(,10.0.32767]",
             "Microsoft.AspNetCore.Antiforgery": "(,10.0.32767]",
