@@ -1,3 +1,4 @@
+
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -19,11 +20,9 @@ try
 {
     var builder = WebApplication.CreateBuilder(args);
 
-    // ── 1. NLog ───────────────────────────────────────────────────────────────
     builder.Logging.ClearProviders();
     builder.Host.UseNLog();
 
-    // ── 2. MongoDB ────────────────────────────────────────────────────────────
     var connectionString = builder.Configuration["Mongo:ConnectionString"]!;
     var databaseName = builder.Configuration["Mongo:DatabaseName"]!;
 
@@ -34,7 +33,6 @@ try
         return client.GetDatabase(databaseName);
     });
 
-    // ── 3. JWT Authentication ─────────────────────────────────────────────────
     var jwtSecret = builder.Configuration["Jwt:Secret"]!;
     var jwtIssuer = builder.Configuration["Jwt:Issuer"]!;
     var jwtAudience = builder.Configuration["Jwt:Audience"]!;
@@ -57,27 +55,22 @@ try
 
     builder.Services.AddAuthorization();
 
-    // ── 4. Data Protection ────────────────────────────────────────────────────
     builder.Services.AddDataProtection()
         .PersistKeysToFileSystem(new DirectoryInfo("/tmp/dataprotection-keys"));
 
-    // ── 5. Antiforgery ────────────────────────────────────────────────────────
     builder.Services.AddAntiforgery(options =>
     {
         options.Cookie.Path = "/";
         options.Cookie.Name = ".AspNetCore.Antiforgery";
     });
 
-    // ── 6. Razor pages ────────────────────────────────────────────────────────
     builder.Services.AddRazorPages(options =>
     {
         options.Conventions.ConfigureFilter(new IgnoreAntiforgeryTokenAttribute());
     });
 
-    // ── 7. OpenAPI ────────────────────────────────────────────────────────────
     builder.Services.AddOpenApi();
 
-    // ── 8. API Versionering ───────────────────────────────────────────────────
     builder.Services.AddApiVersioning(options =>
     {
         options.DefaultApiVersion = new Asp.Versioning.ApiVersion(1, 0);
@@ -85,25 +78,19 @@ try
         options.ReportApiVersions = true;
     });
 
-    // ── 9. Cache ──────────────────────────────────────────────────────────────
     builder.Services.AddMemoryCache();
-
-    // ── 10. Controllers ───────────────────────────────────────────────────────
     builder.Services.AddControllers();
 
-    // ── 11. Repositories ──────────────────────────────────────────────────────
     builder.Services.AddScoped<ITrainerRepository, TrainerRepository>();
     builder.Services.AddScoped<ITrainingPlanRepository, TrainingPlanRepository>();
     builder.Services.AddScoped<INutritionPlanRepository, NutritionPlanRepository>();
 
-    // ── 12. Services ──────────────────────────────────────────────────────────
     builder.Services.AddScoped<ITrainerService, TrainerService>();
     builder.Services.AddScoped<ITrainingPlanService, TrainingPlanService>();
     builder.Services.AddScoped<INutritionPlanService, NutritionPlanService>();
 
     var app = builder.Build();
 
-    // ── 13. Middleware pipeline ───────────────────────────────────────────────
     app.UseForwardedHeaders(new ForwardedHeadersOptions
     {
         ForwardedHeaders = ForwardedHeaders.All
