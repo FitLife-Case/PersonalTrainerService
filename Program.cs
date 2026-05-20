@@ -1,125 +1,142 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using MongoDB.Driver;
+using NLog;
 using NLog.Web;
 using System.Text;
 using FitLife.PersonalTrainer.API.Repositories;
 using FitLife.PersonalTrainer.API.Services;
 using Scalar.AspNetCore;
-using Microsoft.AspNetCore.DataProtection;
 
-var builder = WebApplication.CreateBuilder(args);
+var logger = LogManager.Setup()
+    .LoadConfigurationFromFile("NLog.config")
+    .GetCurrentClassLogger();
 
-// ── 1. NLog ───────────────────────────────────────────────────────────────
-builder.Logging.ClearProviders();
-builder.Host.UseNLog();
-
-// ── 2. MongoDB ────────────────────────────────────────────────────────────
-var connectionString = builder.Configuration["Mongo:ConnectionString"]!;
-var databaseName = builder.Configuration["Mongo:DatabaseName"]!;
-
-builder.Services.AddSingleton<IMongoClient>(_ => new MongoClient(connectionString));
-builder.Services.AddSingleton(sp =>
+try
 {
-    var client = sp.GetRequiredService<IMongoClient>();
-    return client.GetDatabase(databaseName);
-});
+    var builder = WebApplication.CreateBuilder(args);
 
-// ── 3. JWT Authentication ─────────────────────────────────────────────────
-var jwtSecret = builder.Configuration["Jwt:Secret"]!;
-var jwtIssuer = builder.Configuration["Jwt:Issuer"]!;
-var jwtAudience = builder.Configuration["Jwt:Audience"]!;
+    // ── 1. NLog ───────────────────────────────────────────────────────────────
+    builder.Logging.ClearProviders();
+    builder.Host.UseNLog();
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
+    // ── 2. MongoDB ────────────────────────────────────────────────────────────
+    var connectionString = builder.Configuration["Mongo:ConnectionString"]!;
+    var databaseName = builder.Configuration["Mongo:DatabaseName"]!;
+
+    builder.Services.AddSingleton<IMongoClient>(_ => new MongoClient(connectionString));
+    builder.Services.AddSingleton(sp =>
     {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = jwtIssuer,
-            ValidAudience = jwtAudience,
-            IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(jwtSecret))
-        };
+        var client = sp.GetRequiredService<IMongoClient>();
+        return client.GetDatabase(databaseName);
     });
 
-builder.Services.AddAuthorization();
+    // ── 3. JWT Authentication ─────────────────────────────────────────────────
+    var jwtSecret = builder.Configuration["Jwt:Secret"]!;
+    var jwtIssuer = builder.Configuration["Jwt:Issuer"]!;
+    var jwtAudience = builder.Configuration["Jwt:Audience"]!;
 
-// ── 4. Data Protection ────────────────────────────────────────────────────
-builder.Services.AddDataProtection()
-    .PersistKeysToFileSystem(new DirectoryInfo("/tmp/dataprotection-keys"));
+    builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        .AddJwtBearer(options =>
+        {
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = jwtIssuer,
+                ValidAudience = jwtAudience,
+                IssuerSigningKey = new SymmetricSecurityKey(
+                    Encoding.UTF8.GetBytes(jwtSecret))
+            };
+        });
 
-// ── 5. Antiforgery ────────────────────────────────────────────────────────
-builder.Services.AddAntiforgery(options =>
-{
-    options.Cookie.Path = "/";
-    options.Cookie.Name = ".AspNetCore.Antiforgery";
-});
+    builder.Services.AddAuthorization();
 
-// ── 6. Razor pages ────────────────────────────────────────────────────────
-builder.Services.AddRazorPages(options =>
-{
-    options.Conventions.ConfigureFilter(new IgnoreAntiforgeryTokenAttribute());
-});
+    // ── 4. Data Protection ────────────────────────────────────────────────────
+    builder.Services.AddDataProtection()
+        .PersistKeysToFileSystem(new DirectoryInfo("/tmp/dataprotection-keys"));
 
-// ── 7. OpenAPI ────────────────────────────────────────────────────────────
-builder.Services.AddOpenApi();
-
-// ── 8. API Versionering ───────────────────────────────────────────────────
-builder.Services.AddApiVersioning(options =>
-{
-    options.DefaultApiVersion = new Asp.Versioning.ApiVersion(1, 0);
-    options.AssumeDefaultVersionWhenUnspecified = true;
-    options.ReportApiVersions = true;
-});
-
-// ── 9. Cache ──────────────────────────────────────────────────────────────
-builder.Services.AddMemoryCache();
-
-// ── 10. Controllers ───────────────────────────────────────────────────────
-builder.Services.AddControllers();
-
-// ── 11. Repositories ──────────────────────────────────────────────────────
-builder.Services.AddScoped<ITrainerRepository, TrainerRepository>();
-builder.Services.AddScoped<ITrainingPlanRepository, TrainingPlanRepository>();
-builder.Services.AddScoped<INutritionPlanRepository, NutritionPlanRepository>();
-
-// ── 12. Services ──────────────────────────────────────────────────────────
-builder.Services.AddScoped<ITrainerService, TrainerService>();
-builder.Services.AddScoped<ITrainingPlanService, TrainingPlanService>();
-builder.Services.AddScoped<INutritionPlanService, NutritionPlanService>();
-
-var app = builder.Build();
-
-// ── 13. Middleware pipeline ───────────────────────────────────────────────
-app.UseForwardedHeaders(new ForwardedHeadersOptions
-{
-    ForwardedHeaders = ForwardedHeaders.All
-});
-
-app.Use(async (context, next) =>
-{
-    var prefix = context.Request.Headers["X-Forwarded-Prefix"].FirstOrDefault();
-    if (!string.IsNullOrEmpty(prefix))
+    // ── 5. Antiforgery ────────────────────────────────────────────────────────
+    builder.Services.AddAntiforgery(options =>
     {
-        context.Request.PathBase = new PathString(prefix);
-    }
-    await next();
-});
+        options.Cookie.Path = "/";
+        options.Cookie.Name = ".AspNetCore.Antiforgery";
+    });
 
-app.UsePathBase("/personaltrainer");
+    // ── 6. Razor pages ────────────────────────────────────────────────────────
+    builder.Services.AddRazorPages(options =>
+    {
+        options.Conventions.ConfigureFilter(new IgnoreAntiforgeryTokenAttribute());
+    });
 
-app.MapOpenApi();
-app.MapScalarApiReference();
-app.MapRazorPages();
+    // ── 7. OpenAPI ────────────────────────────────────────────────────────────
+    builder.Services.AddOpenApi();
 
-app.UseAuthentication();
-app.UseAuthorization();
-app.MapControllers();
+    // ── 8. API Versionering ───────────────────────────────────────────────────
+    builder.Services.AddApiVersioning(options =>
+    {
+        options.DefaultApiVersion = new Asp.Versioning.ApiVersion(1, 0);
+        options.AssumeDefaultVersionWhenUnspecified = true;
+        options.ReportApiVersions = true;
+    });
 
-app.Run();
+    // ── 9. Cache ──────────────────────────────────────────────────────────────
+    builder.Services.AddMemoryCache();
+
+    // ── 10. Controllers ───────────────────────────────────────────────────────
+    builder.Services.AddControllers();
+
+    // ── 11. Repositories ──────────────────────────────────────────────────────
+    builder.Services.AddScoped<ITrainerRepository, TrainerRepository>();
+    builder.Services.AddScoped<ITrainingPlanRepository, TrainingPlanRepository>();
+    builder.Services.AddScoped<INutritionPlanRepository, NutritionPlanRepository>();
+
+    // ── 12. Services ──────────────────────────────────────────────────────────
+    builder.Services.AddScoped<ITrainerService, TrainerService>();
+    builder.Services.AddScoped<ITrainingPlanService, TrainingPlanService>();
+    builder.Services.AddScoped<INutritionPlanService, NutritionPlanService>();
+
+    var app = builder.Build();
+
+    // ── 13. Middleware pipeline ───────────────────────────────────────────────
+    app.UseForwardedHeaders(new ForwardedHeadersOptions
+    {
+        ForwardedHeaders = ForwardedHeaders.All
+    });
+
+    app.Use(async (context, next) =>
+    {
+        var prefix = context.Request.Headers["X-Forwarded-Prefix"].FirstOrDefault();
+        if (!string.IsNullOrEmpty(prefix))
+        {
+            context.Request.PathBase = new PathString(prefix);
+        }
+        await next();
+    });
+
+    app.UsePathBase("/personaltrainer");
+
+    app.MapOpenApi();
+    app.MapScalarApiReference();
+    app.MapRazorPages();
+
+    app.UseAuthentication();
+    app.UseAuthorization();
+    app.MapControllers();
+
+    app.Run();
+}
+catch (Exception ex)
+{
+    logger.Fatal(ex, "PersonalTrainer service failed to start");
+    throw;
+}
+finally
+{
+    LogManager.Shutdown();
+}
