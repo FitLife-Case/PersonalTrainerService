@@ -6,7 +6,7 @@ using FitLife.PersonalTrainer.API.Services;
 namespace FitLife.PersonalTrainer.API.Controllers;
 
 [ApiController]
-
+[Authorize]
 public class PersonalTrainerController : ControllerBase
 {
     private readonly ITrainerService _trainerService;
@@ -27,11 +27,11 @@ public class PersonalTrainerController : ControllerBase
     }
 
     // ──────────────────────────────────────────────────────────────────────────
-    // TRAINER ENDPOINTS1
+    // TRAINER ENDPOINTS
     // ──────────────────────────────────────────────────────────────────────────
 
-    /// <summary>Hent alle trænere</summary>
     [HttpGet("api/trainers")]
+    [AllowAnonymous]
     [ProducesResponseType(typeof(List<Trainer>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetAllTrainers(CancellationToken ct)
     {
@@ -39,8 +39,8 @@ public class PersonalTrainerController : ControllerBase
         return Ok(trainers);
     }
 
-    /// <summary>Hent træner på ID</summary>
     [HttpGet("api/trainers/{id}")]
+    [AllowAnonymous]
     [ProducesResponseType(typeof(Trainer), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetTrainerById(Guid id, CancellationToken ct)
@@ -51,8 +51,8 @@ public class PersonalTrainerController : ControllerBase
         return Ok(trainer);
     }
 
-    /// <summary>Hent alle1 trænere på et bestemt center</summary>
     [HttpGet("api/trainers/center/{centerId}")]
+    [AllowAnonymous]
     [ProducesResponseType(typeof(List<Trainer>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetTrainersByCenter(Guid centerId, CancellationToken ct)
     {
@@ -60,8 +60,8 @@ public class PersonalTrainerController : ControllerBase
         return Ok(trainers);
     }
 
-    /// <summary>Opret ny træner</summary>
     [HttpPost("api/trainers")]
+    [Authorize(Roles = "Admin")]
     [ProducesResponseType(typeof(Trainer), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> CreateTrainer([FromBody] Trainer trainer, CancellationToken ct)
@@ -70,8 +70,8 @@ public class PersonalTrainerController : ControllerBase
         return CreatedAtAction(nameof(GetTrainerById), new { id = created.Id }, created);
     }
 
-    /// <summary>Opdater træner</summary>
     [HttpPut("api/trainers/{id}")]
+    [Authorize(Roles = "Admin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> UpdateTrainer(Guid id, [FromBody] Trainer trainer, CancellationToken ct)
@@ -80,8 +80,8 @@ public class PersonalTrainerController : ControllerBase
         return Ok();
     }
 
-    /// <summary>Slet træner</summary>
     [HttpDelete("api/trainers/{id}")]
+    [Authorize(Roles = "Admin")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> DeleteTrainer(Guid id, CancellationToken ct)
@@ -90,8 +90,8 @@ public class PersonalTrainerController : ControllerBase
         return NoContent();
     }
 
-    /// <summary>Tilføj ledig tid til træner</summary>
     [HttpPost("api/trainers/{trainerId}/availability")]
+    [Authorize(Roles = "Admin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> AddAvailabilitySlot(
@@ -103,8 +103,8 @@ public class PersonalTrainerController : ControllerBase
         return Ok();
     }
 
-    /// <summary>Fjern ledig tid fra træner</summary>
     [HttpDelete("api/trainers/{trainerId}/availability/{slotId}")]
+    [Authorize(Roles = "Admin")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> RemoveAvailabilitySlot(
@@ -120,8 +120,8 @@ public class PersonalTrainerController : ControllerBase
     // TRAINING PLAN ENDPOINTS
     // ──────────────────────────────────────────────────────────────────────────
 
-    /// <summary>Hent træningsplan på ID</summary>
     [HttpGet("api/trainingplans/{id}")]
+    [AllowAnonymous]
     [ProducesResponseType(typeof(TrainingPlan), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetTrainingPlanById(Guid id, CancellationToken ct)
@@ -132,8 +132,8 @@ public class PersonalTrainerController : ControllerBase
         return Ok(plan);
     }
 
-    /// <summary>Hent alle træningsplaner for et medlem</summary>
     [HttpGet("api/trainingplans/member/{memberId}")]
+    [AllowAnonymous]
     [ProducesResponseType(typeof(List<TrainingPlan>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetTrainingPlansByMember(Guid memberId, CancellationToken ct)
     {
@@ -141,8 +141,8 @@ public class PersonalTrainerController : ControllerBase
         return Ok(plans);
     }
 
-    /// <summary>Hent alle træningsplaner for en træner</summary>
     [HttpGet("api/trainingplans/trainer/{trainerId}")]
+    [AllowAnonymous]
     [ProducesResponseType(typeof(List<TrainingPlan>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetTrainingPlansByTrainer(Guid trainerId, CancellationToken ct)
     {
@@ -150,8 +150,8 @@ public class PersonalTrainerController : ControllerBase
         return Ok(plans);
     }
 
-    /// <summary>Opret ny træningsplan</summary>
     [HttpPost("api/trainingplans")]
+    [Authorize(Roles = "Admin")]
     [ProducesResponseType(typeof(TrainingPlan), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> CreateTrainingPlan([FromBody] TrainingPlan plan, CancellationToken ct)
@@ -160,8 +160,8 @@ public class PersonalTrainerController : ControllerBase
         return CreatedAtAction(nameof(GetTrainingPlanById), new { id = created.Id }, created);
     }
 
-    /// <summary>Opdater træningsplan</summary>
     [HttpPut("api/trainingplans/{id}")]
+    [Authorize(Roles = "Admin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> UpdateTrainingPlan(Guid id, [FromBody] TrainingPlan plan, CancellationToken ct)
@@ -170,8 +170,8 @@ public class PersonalTrainerController : ControllerBase
         return Ok();
     }
 
-    /// <summary>Slet træningsplan</summary>
     [HttpDelete("api/trainingplans/{id}")]
+    [Authorize(Roles = "Admin")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> DeleteTrainingPlan(Guid id, CancellationToken ct)
@@ -180,8 +180,8 @@ public class PersonalTrainerController : ControllerBase
         return NoContent();
     }
 
-    /// <summary>Opdater status på træningsplan</summary>
     [HttpPatch("api/trainingplans/{id}/status")]
+    [Authorize(Roles = "Admin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> UpdateTrainingPlanStatus(
@@ -193,8 +193,8 @@ public class PersonalTrainerController : ControllerBase
         return Ok();
     }
 
-    /// <summary>Tilføj øvelse til træningsplan</summary>
     [HttpPost("api/trainingplans/{planId}/exercises")]
+    [Authorize(Roles = "Admin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> AddExercise(
@@ -206,8 +206,8 @@ public class PersonalTrainerController : ControllerBase
         return Ok();
     }
 
-    /// <summary>Fjern øvelse fra træningsplan</summary>
     [HttpDelete("api/trainingplans/{planId}/exercises/{exerciseId}")]
+    [Authorize(Roles = "Admin")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> RemoveExercise(
@@ -223,8 +223,8 @@ public class PersonalTrainerController : ControllerBase
     // NUTRITION PLAN ENDPOINTS
     // ──────────────────────────────────────────────────────────────────────────
 
-    /// <summary>Hent kostplan på ID</summary>
     [HttpGet("api/nutritionplans/{id}")]
+    [AllowAnonymous]
     [ProducesResponseType(typeof(NutritionPlan), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetNutritionPlanById(Guid id, CancellationToken ct)
@@ -235,8 +235,8 @@ public class PersonalTrainerController : ControllerBase
         return Ok(plan);
     }
 
-    /// <summary>Hent alle kostplaner for et medlem</summary>
     [HttpGet("api/nutritionplans/member/{memberId}")]
+    [AllowAnonymous]
     [ProducesResponseType(typeof(List<NutritionPlan>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetNutritionPlansByMember(Guid memberId, CancellationToken ct)
     {
@@ -244,8 +244,8 @@ public class PersonalTrainerController : ControllerBase
         return Ok(plans);
     }
 
-    /// <summary>Hent alle kostplaner for en træner</summary>
     [HttpGet("api/nutritionplans/trainer/{trainerId}")]
+    [AllowAnonymous]
     [ProducesResponseType(typeof(List<NutritionPlan>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetNutritionPlansByTrainer(Guid trainerId, CancellationToken ct)
     {
@@ -253,8 +253,8 @@ public class PersonalTrainerController : ControllerBase
         return Ok(plans);
     }
 
-    /// <summary>Opret ny kostplan</summary>
     [HttpPost("api/nutritionplans")]
+    [Authorize(Roles = "Admin")]
     [ProducesResponseType(typeof(NutritionPlan), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> CreateNutritionPlan([FromBody] NutritionPlan plan, CancellationToken ct)
@@ -263,8 +263,8 @@ public class PersonalTrainerController : ControllerBase
         return CreatedAtAction(nameof(GetNutritionPlanById), new { id = created.Id }, created);
     }
 
-    /// <summary>Opdater kostplan</summary>
     [HttpPut("api/nutritionplans/{id}")]
+    [Authorize(Roles = "Admin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> UpdateNutritionPlan(Guid id, [FromBody] NutritionPlan plan, CancellationToken ct)
@@ -273,8 +273,8 @@ public class PersonalTrainerController : ControllerBase
         return Ok();
     }
 
-    /// <summary>Slet kostplan</summary>
     [HttpDelete("api/nutritionplans/{id}")]
+    [Authorize(Roles = "Admin")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> DeleteNutritionPlan(Guid id, CancellationToken ct)
@@ -283,8 +283,8 @@ public class PersonalTrainerController : ControllerBase
         return NoContent();
     }
 
-    /// <summary>Opdater status på kostplan</summary>
     [HttpPatch("api/nutritionplans/{id}/status")]
+    [Authorize(Roles = "Admin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> UpdateNutritionPlanStatus(
@@ -296,8 +296,8 @@ public class PersonalTrainerController : ControllerBase
         return Ok();
     }
 
-    /// <summary>Tilføj måltid til kostplan</summary>
     [HttpPost("api/nutritionplans/{planId}/meals")]
+    [Authorize(Roles = "Admin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> AddMeal(
@@ -309,8 +309,8 @@ public class PersonalTrainerController : ControllerBase
         return Ok();
     }
 
-    /// <summary>Fjern måltid fra kostplan</summary>
     [HttpDelete("api/nutritionplans/{planId}/meals/{mealId}")]
+    [Authorize(Roles = "Admin")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> RemoveMeal(

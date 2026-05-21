@@ -22,9 +22,8 @@ try
 
     builder.Logging.ClearProviders();
     builder.Host.UseNLog();
-
-    var connectionString = builder.Configuration["Mongo:ConnectionString"]!;
-    var databaseName = builder.Configuration["Mongo:DatabaseName"]!;
+    var connectionString = builder.Configuration["Mongo__ConnectionString"]!;
+    var databaseName = builder.Configuration["Mongo__DatabaseName"]!;
 
     builder.Services.AddSingleton<IMongoClient>(_ => new MongoClient(connectionString));
     builder.Services.AddSingleton(sp =>
@@ -33,9 +32,9 @@ try
         return client.GetDatabase(databaseName);
     });
 
-    var jwtSecret = builder.Configuration["Jwt:Secret"]!;
-    var jwtIssuer = builder.Configuration["Jwt:Issuer"]!;
-    var jwtAudience = builder.Configuration["Jwt:Audience"]!;
+    var jwtSecret = builder.Configuration["Jwt__Secret"]!;
+    var jwtIssuer = builder.Configuration["Jwt__Issuer"]!;
+    var jwtAudience = builder.Configuration["Jwt__Audience"]!;
 
     builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         .AddJwtBearer(options =>
