@@ -19,14 +19,16 @@ var logger = LogManager.Setup()
 
 try
 {
+    // Tilføj dette som det ALLERFØRSTE i try-blokken
+var vaultUrl = Environment.GetEnvironmentVariable("Vault__Url") 
+               ?? throw new Exception("Vault__Url mangler");
+var vaultToken = Environment.GetEnvironmentVariable("Vault__Token") 
+                 ?? throw new Exception("Vault__Token mangler");
     var builder = WebApplication.CreateBuilder(args);
 
     builder.Logging.ClearProviders();
     builder.Host.UseNLog();
 
-    // ── Vault ──────────────────────────────────────────────────────────────
-    var vaultUrl = builder.Configuration["Vault__Url"] ?? "http://haav-vault:8200";
-var vaultToken = builder.Configuration["Vault__Token"] ?? "haav-root-token";
 
     var vaultClient = new VaultClient(new VaultClientSettings(vaultUrl, new TokenAuthMethodInfo(vaultToken)));
     var vaultSecrets = await vaultClient.V1.Secrets.KeyValue.V2.ReadSecretAsync(
