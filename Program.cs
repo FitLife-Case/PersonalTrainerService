@@ -1,4 +1,3 @@
-
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -11,6 +10,8 @@ using System.Text;
 using FitLife.PersonalTrainer.API.Repositories;
 using FitLife.PersonalTrainer.API.Services;
 using Scalar.AspNetCore;
+using VaultSharp;
+using VaultSharp.V1.AuthMethods.Token;
 
 var logger = LogManager.Setup()
     .LoadConfigurationFromFile("NLog.config")
@@ -22,9 +23,24 @@ try
 
     builder.Logging.ClearProviders();
     builder.Host.UseNLog();
-    var connectionString = builder.Configuration["Mongo__ConnectionString"]!;
-    var databaseName = builder.Configuration["Mongo__DatabaseName"]!;
 
+    // ── Vault ──────────────────────────────────────────────────────────────
+    var vaultUrl = builder.Configuration["Vault:Url"] ?? "http://haav-vault:8200";
+    var vaultToken = builder.Configuration["Vault:Token"] ?? "haav-root-token";
+
+    var vaultClient = new VaultClient(new VaultClientSettings(vaultUrl, new TokenAuthMethodInfo(vaultToken)));
+    var vaultSecrets = await vaultClient.V1.Secrets.KeyValue.V2.ReadSecretAsync(
+        path: "personaltrainer",
+        mountPoint: "secret");
+
+    var secrets = vaultSecrets.Data.Data;
+    var connectionString = secrets["Mongo__ConnectionString"].ToString()!;
+    var databaseName = secrets["Mongo__DatabaseName"].ToString()!;
+    var jwtSecret = secrets["Jwt__Secret"].ToString()!;
+    var jwtIssuer = secrets["Jwt__Issuer"].ToString()!;
+    var jwtAudience = secrets["Jwt__Audience"].ToString()!;
+
+    // ── MongoDB ────────────────────────────────────────────────────────────
     builder.Services.AddSingleton<IMongoClient>(_ => new MongoClient(connectionString));
     builder.Services.AddSingleton(sp =>
     {
@@ -32,10 +48,7 @@ try
         return client.GetDatabase(databaseName);
     });
 
-    var jwtSecret = builder.Configuration["Jwt__Secret"]!;
-    var jwtIssuer = builder.Configuration["Jwt__Issuer"]!;
-    var jwtAudience = builder.Configuration["Jwt__Audience"]!;
-
+    // ── JWT Authentication ─────────────────────────────────────────────────
     builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         .AddJwtBearer(options =>
         {
@@ -47,8 +60,16 @@ try
                 ValidateIssuerSigningKey = true,
                 ValidIssuer = jwtIssuer,
                 ValidAudience = jwtAudience,
-                IssuerSigningKey = new SymmetricSecurityKey(
-                    Encoding.UTF8.GetBytes(jwtSecret))
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret))
+            };
+
+            options.Events = new JwtBearerEvents
+            {
+                OnMessageReceived = context =>
+                {
+                    context.Token = context.Request.Cookies["JwtToken"];
+                    return Task.CompletedTask;
+                }
             };
         });
 
@@ -107,12 +128,13 @@ try
 
     app.UsePathBase("/personaltrainer");
 
+    // ── Middleware rækkefølge ──────────────────────────────────────────────
+    app.UseAuthentication();
+    app.UseAuthorization();
+
     app.MapOpenApi();
     app.MapScalarApiReference();
     app.MapRazorPages();
-
-    app.UseAuthentication();
-    app.UseAuthorization();
     app.MapControllers();
 
     app.Run();
