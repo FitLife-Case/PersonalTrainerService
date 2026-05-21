@@ -25,8 +25,8 @@ try
     builder.Host.UseNLog();
 
     // ── Vault ──────────────────────────────────────────────────────────────
-    var vaultUrl = builder.Configuration["Vault:Url"] ?? "http://haav-vault:8200";
-    var vaultToken = builder.Configuration["Vault:Token"] ?? "haav-root-token";
+    var vaultUrl = builder.Configuration["Vault__Url"]!;
+    var vaultToken = builder.Configuration["Vault__Token"]!;
 
     var vaultClient = new VaultClient(new VaultClientSettings(vaultUrl, new TokenAuthMethodInfo(vaultToken)));
     var vaultSecrets = await vaultClient.V1.Secrets.KeyValue.V2.ReadSecretAsync(
