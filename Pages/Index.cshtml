@@ -4,242 +4,375 @@
     ViewData["Title"] = "Personal Trainer";
 }
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+<style>
+    body {
+        background: linear-gradient(135deg, #FFFFFF 0%, #EDE8F5 50%, #D8D0F0 100%);
+        min-height: 100vh;
+        font-family: 'Inter', sans-serif;
+    }
 
-<div class="container mt-4">
-    <h1 class="mb-4">FitLife - Personal Trainer</h1>
+    .glass-card {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(160, 120, 240, 0.2);
+        border-radius: 20px;
+        box-shadow: 0 4px 24px rgba(107, 53, 217, 0.08);
+        transition: box-shadow 0.2s;
+    }
 
-    <ul class="nav nav-tabs mb-4" id="mainTab">
-        <li class="nav-item">
-            <a class="nav-link active" data-bs-toggle="tab" href="#trainers">Traenere</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" data-bs-toggle="tab" href="#trainingplans">Traeningsplaner</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" data-bs-toggle="tab" href="#nutritionplans">Kostplaner</a>
-        </li>
-    </ul>
+    .glass-card:hover {
+        box-shadow: 0 8px 32px rgba(107, 53, 217, 0.15);
+    }
 
-    <div class="tab-content">
+    .trainer-avatar {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #6B35D9 0%, #C084FC 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 24px;
+        font-weight: 700;
+        flex-shrink: 0;
+        position: relative;
+    }
 
-        <div class="tab-pane fade show active" id="trainers">
-            <div class="card p-3 mb-4">
-                <h5>Opret traener</h5>
-                <form method="post" action="/personaltrainer/?handler=CreateTrainer">
-                    @Html.AntiForgeryToken()
-                    <div class="row g-2">
-                        <div class="col-md-6">
-                            <input class="form-control" name="NewTrainer.FirstName" placeholder="Fornavn" required />
-                        </div>
-                        <div class="col-md-6">
-                            <input class="form-control" name="NewTrainer.LastName" placeholder="Efternavn" required />
-                        </div>
-                        <div class="col-md-6">
-                            <input class="form-control" name="NewTrainer.Email" placeholder="Email" required />
-                        </div>
-                        <div class="col-md-6">
-                            <input class="form-control" name="NewTrainer.PhoneNumber" placeholder="Telefon" />
-                        </div>
-                        <div class="col-md-6">
-                            <input class="form-control" name="NewTrainer.YearsOfExperience" placeholder="Erfaringsaar" type="number" />
-                        </div>
-                        <div class="col-12">
-                            <textarea class="form-control" name="NewTrainer.Bio" placeholder="Bio" rows="2"></textarea>
-                        </div>
-                    </div>
-                    <button class="btn btn-primary mt-2" type="submit">Opret</button>
-                </form>
-            </div>
+    .online-dot {
+        position: absolute;
+        bottom: 2px;
+        right: 2px;
+        width: 14px;
+        height: 14px;
+        background: #10B981;
+        border-radius: 50%;
+        border: 2px solid white;
+    }
 
-            <div class="row">
-                @foreach (var trainer in Model.Trainers)
-                {
-                    <div class="col-md-4 mb-3">
-                        <div class="card h-100">
-                            <div class="card-body">
-                                <h5>@trainer.FirstName @trainer.LastName</h5>
-                                <p class="text-muted">@trainer.Bio</p>
-                                <p><strong>Email:</strong> @trainer.Email</p>
-                                <p><strong>Telefon:</strong> @trainer.PhoneNumber</p>
-                                <p><strong>Erfaring:</strong> @trainer.YearsOfExperience ar</p>
-                                <p><strong>ID:</strong> @trainer.Id</p>
-                                <span class="badge @(trainer.IsActive ? "bg-success" : "bg-danger")">
-                                    @(trainer.IsActive ? "Aktiv" : "Inaktiv")
-                                </span>
-                            </div>
-                            <div class="card-footer">
-    <div class="mb-2">
-        <input class="form-control form-control-sm booking-member-id-@trainer.Id" 
-               placeholder="Medlem ID" />
-    </div>
-    <div class="mb-2">
-        <input class="form-control form-control-sm booking-member-name-@trainer.Id" 
-               placeholder="Dit navn" />
-    </div>
-    <div class="mb-2">
-        <input class="form-control form-control-sm booking-start-@trainer.Id" 
-               type="datetime-local" />
-    </div>
-    <div class="mb-2">
-        <input class="form-control form-control-sm booking-centre-@trainer.Id" 
-               placeholder="Center" />
-    </div>
-    <div class="d-flex gap-2">
-        <button class="btn btn-sm btn-primary flex-grow-1"
-            onclick="bookTrainer('@trainer.Id', '@trainer.FirstName @trainer.LastName', this)">
-            Book træner
-        </button>
-        <form method="post" action="/personaltrainer/?handler=DeleteTrainer">
-            @Html.AntiForgeryToken()
-            <input type="hidden" name="id" value="@trainer.Id" />
-            <button class="btn btn-sm btn-danger" type="submit">Slet</button>
-        </form>
-    </div>
-</div>
-</div>
-                    </div>
-                }
-            </div>
+    .tag {
+        background: rgba(107, 53, 217, 0.1);
+        color: #6B35D9;
+        border-radius: 20px;
+        padding: 4px 12px;
+        font-size: 12px;
+        display: inline-block;
+        margin: 2px;
+    }
+
+    .btn-book {
+        background: linear-gradient(135deg, #6B35D9 0%, #A855F7 100%);
+        box-shadow: 0 4px 16px rgba(107, 53, 217, 0.3);
+        border: none;
+        border-radius: 50px;
+        color: white;
+        font-weight: 500;
+        padding: 10px 24px;
+        transition: transform 0.15s;
+    }
+
+    .btn-book:hover {
+        transform: scale(1.05);
+        color: white;
+    }
+
+    .star { color: #C9A84C; }
+
+    .section-title {
+        font-size: 24px;
+        font-weight: 700;
+        color: #1a1a2e;
+    }
+
+    .section-subtitle {
+        color: #6B7280;
+        font-size: 14px;
+    }
+
+    .nav-tabs .nav-link {
+        color: #6B35D9;
+        border: none;
+        font-weight: 500;
+    }
+
+    .nav-tabs .nav-link.active {
+        background: linear-gradient(135deg, #6B35D9 0%, #A855F7 100%);
+        color: white;
+        border-radius: 10px;
+    }
+
+    .form-glass {
+        background: rgba(255,255,255,0.6);
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(160,120,240,0.2);
+        border-radius: 16px;
+        padding: 20px;
+        margin-bottom: 24px;
+    }
+
+    .booking-inputs input {
+        border-radius: 10px;
+        border: 1px solid rgba(160,120,240,0.3);
+        margin-bottom: 8px;
+        font-size: 13px;
+    }
+</style>
+
+<div style="min-height:100vh; padding: 24px 16px 80px;">
+    <div style="max-width: 900px; margin: 0 auto;">
+
+        <div class="mb-6">
+            <h2 class="section-title">FitLife - Personal Trainer</h2>
+            <p class="section-subtitle">30 min session fra 100 kr</p>
         </div>
 
-        <div class="tab-pane fade" id="trainingplans">
-            <div class="card p-3 mb-4">
-                <h5>Soeg planer for traener</h5>
-                <form method="get" action="/personaltrainer/?handler=TrainerPlans">
-                    <div class="row g-2">
-                        <div class="col-md-6">
-                            <input class="form-control" name="trainerId" placeholder="Traener ID" required />
+        <ul class="nav nav-tabs mb-4" id="mainTab">
+            <li class="nav-item">
+                <a class="nav-link active" data-bs-toggle="tab" href="#trainers">Trænere</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" href="#trainingplans">Træningsplaner</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" href="#nutritionplans">Kostplaner</a>
+            </li>
+        </ul>
+
+        <div class="tab-content">
+
+            <!-- TAB 1: Trænere -->
+            <div class="tab-pane fade show active" id="trainers">
+
+                <div class="form-glass">
+                    <h5 style="color:#1a1a2e; margin-bottom:16px;">Opret træner</h5>
+                    <form method="post" action="/personaltrainer/?handler=CreateTrainer">
+                        @Html.AntiForgeryToken()
+                        <div class="row g-2">
+                            <div class="col-md-6">
+                                <input class="form-control" name="NewTrainer.FirstName" placeholder="Fornavn" required />
+                            </div>
+                            <div class="col-md-6">
+                                <input class="form-control" name="NewTrainer.LastName" placeholder="Efternavn" required />
+                            </div>
+                            <div class="col-md-6">
+                                <input class="form-control" name="NewTrainer.Email" placeholder="Email" required />
+                            </div>
+                            <div class="col-md-6">
+                                <input class="form-control" name="NewTrainer.PhoneNumber" placeholder="Telefon" />
+                            </div>
+                            <div class="col-md-6">
+                                <input class="form-control" name="NewTrainer.YearsOfExperience" placeholder="Erfaringsår" type="number" />
+                            </div>
+                            <div class="col-12">
+                                <textarea class="form-control" name="NewTrainer.Bio" placeholder="Bio / specialisering" rows="2"></textarea>
+                            </div>
                         </div>
-                        <div class="col-md-2">
-                            <button class="btn btn-secondary" type="submit">Hent planer</button>
+                        <button class="btn-book mt-2" type="submit">Opret træner</button>
+                    </form>
+                </div>
+
+                <div class="row">
+                    @foreach (var trainer in Model.Trainers)
+                    {
+                        <div class="col-12 mb-3">
+                            <div class="glass-card p-4">
+                                <div class="d-flex gap-4">
+                                    <div class="trainer-avatar">
+                                        @trainer.FirstName[0]
+                                        @if (trainer.IsActive)
+                                        {
+                                            <div class="online-dot"></div>
+                                        }
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <div>
+                                                <h5 style="color:#1a1a2e; margin-bottom:2px;">@trainer.FirstName @trainer.LastName</h5>
+                                                <p style="color:#6B35D9; font-size:14px; margin-bottom:8px;">@trainer.Bio</p>
+                                            </div>
+                                        </div>
+
+                                        <!-- Stjerner -->
+                                        <div class="mb-2">
+                                            <span class="star">★★★★★</span>
+                                        </div>
+
+                                        <!-- Tags -->
+                                        <div class="mb-3">
+                                            <span class="tag">@trainer.YearsOfExperience års erfaring</span>
+                                            <span class="tag">@trainer.Email</span>
+                                            @if (trainer.IsActive)
+                                            {
+                                                <span class="tag" style="background:rgba(16,185,129,0.1); color:#10B981;">Aktiv</span>
+                                            }
+                                        </div>
+
+                                        <!-- Booking inputs -->
+                                        <div class="booking-inputs">
+                                            <div class="row g-2 mb-2">
+                                                <div class="col-md-6">
+                                                    <input class="form-control form-control-sm booking-member-id-@trainer.Id" placeholder="Medlem ID" />
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <input class="form-control form-control-sm booking-member-name-@trainer.Id" placeholder="Dit navn" />
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <input class="form-control form-control-sm booking-start-@trainer.Id" type="datetime-local" />
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <input class="form-control form-control-sm booking-centre-@trainer.Id" placeholder="Center" />
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Pris og knapper -->
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span style="font-weight:600; color:#1a1a2e;">100 kr / 30 min</span>
+                                            <div class="d-flex gap-2">
+                                                <button class="btn-book"
+                                                    onclick="bookTrainer('@trainer.Id', '@trainer.FirstName @trainer.LastName', this)">
+                                                    Book session
+                                                </button>
+                                                <form method="post" action="/personaltrainer/?handler=DeleteTrainer" style="margin:0;">
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="id" value="@trainer.Id" />
+                                                    <button class="btn btn-sm btn-outline-danger" style="border-radius:50px;" type="submit">Slet</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </form>
+                    }
+                </div>
             </div>
 
-            <div class="card p-3 mb-4">
-                <h5>Opret traeningsplan</h5>
-                <form method="post" action="/personaltrainer/?handler=CreateTrainingPlan">
-                    @Html.AntiForgeryToken()
-                    <div class="row g-2">
-                        <div class="col-md-6">
-                            <input class="form-control" name="NewTrainingPlan.TrainerId" placeholder="Traener ID" required />
+            <!-- TAB 2: Træningsplaner -->
+            <div class="tab-pane fade" id="trainingplans">
+                <div class="form-glass">
+                    <h5 style="color:#1a1a2e; margin-bottom:16px;">Søg planer for træner</h5>
+                    <form method="get" action="/personaltrainer/?handler=TrainerPlans">
+                        <div class="row g-2">
+                            <div class="col-md-6">
+                                <input class="form-control" name="trainerId" placeholder="Træner ID" required />
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn-book" type="submit">Hent planer</button>
+                            </div>
                         </div>
-                        <div class="col-md-6">
-                            <input class="form-control" name="NewTrainingPlan.MemberId" placeholder="Medlem ID" required />
-                        </div>
-                        <div class="col-md-6">
-                            <input class="form-control" name="NewTrainingPlan.Name" placeholder="Plannavn" required />
-                        </div>
-                        <div class="col-md-6">
-                            <input class="form-control" name="NewTrainingPlan.Description" placeholder="Beskrivelse" />
-                        </div>
-                        <div class="col-md-6">
-                            <input class="form-control" name="NewTrainingPlan.StartDate" type="date" />
-                        </div>
-                        <div class="col-md-6">
-                            <input class="form-control" name="NewTrainingPlan.EndDate" type="date" />
-                        </div>
-                    </div>
-                    <button class="btn btn-primary mt-2" type="submit">Opret</button>
-                </form>
-            </div>
+                    </form>
+                </div>
 
-            <div class="row">
-                @foreach (var plan in Model.TrainingPlans)
-                {
-                    <div class="col-md-4 mb-3">
-                        <div class="card h-100">
-                            <div class="card-body">
-                                <h5>@plan.Name</h5>
-                                <p class="text-muted">@plan.Description</p>
+                <div class="form-glass">
+                    <h5 style="color:#1a1a2e; margin-bottom:16px;">Opret træningsplan</h5>
+                    <form method="post" action="/personaltrainer/?handler=CreateTrainingPlan">
+                        @Html.AntiForgeryToken()
+                        <div class="row g-2">
+                            <div class="col-md-6">
+                                <input class="form-control" name="NewTrainingPlan.TrainerId" placeholder="Træner ID" required />
+                            </div>
+                            <div class="col-md-6">
+                                <input class="form-control" name="NewTrainingPlan.MemberId" placeholder="Medlem ID" required />
+                            </div>
+                            <div class="col-md-6">
+                                <input class="form-control" name="NewTrainingPlan.Name" placeholder="Plannavn" required />
+                            </div>
+                            <div class="col-md-6">
+                                <input class="form-control" name="NewTrainingPlan.Description" placeholder="Beskrivelse" />
+                            </div>
+                            <div class="col-md-6">
+                                <input class="form-control" name="NewTrainingPlan.StartDate" type="date" />
+                            </div>
+                            <div class="col-md-6">
+                                <input class="form-control" name="NewTrainingPlan.EndDate" type="date" />
+                            </div>
+                        </div>
+                        <button class="btn-book mt-2" type="submit">Opret plan</button>
+                    </form>
+                </div>
+
+                <div class="row">
+                    @foreach (var plan in Model.TrainingPlans)
+                    {
+                        <div class="col-md-4 mb-3">
+                            <div class="glass-card p-4">
+                                <h5 style="color:#1a1a2e;">@plan.Name</h5>
+                                <p style="color:#6B7280; font-size:14px;">@plan.Description</p>
                                 <p><strong>Start:</strong> @plan.StartDate</p>
                                 <p><strong>Slut:</strong> @plan.EndDate</p>
-                                <span class="badge bg-info">@plan.Status</span>
+                                <span class="tag">@plan.Status</span>
+                                <div class="mt-3">
+                                    <form method="post" action="/personaltrainer/?handler=DeleteTrainingPlan">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@plan.Id" />
+                                        <button class="btn btn-sm btn-outline-danger" style="border-radius:50px;" type="submit">Slet</button>
+                                    </form>
+                                </div>
                             </div>
-                            <div class="card-footer">
-                                <form method="post" action="/personaltrainer/?handler=DeleteTrainingPlan">
-                                    @Html.AntiForgeryToken()
-                                    <input type="hidden" name="id" value="@plan.Id" />
-                                    <button class="btn btn-sm btn-danger" type="submit">Slet</button>
-                                </form>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- TAB 3: Kostplaner -->
+            <div class="tab-pane fade" id="nutritionplans">
+                <div class="form-glass">
+                    <h5 style="color:#1a1a2e; margin-bottom:16px;">Opret kostplan</h5>
+                    <form method="post" action="/personaltrainer/?handler=CreateNutritionPlan">
+                        @Html.AntiForgeryToken()
+                        <div class="row g-2">
+                            <div class="col-md-6">
+                                <input class="form-control" name="NewNutritionPlan.TrainerId" placeholder="Træner ID" required />
+                            </div>
+                            <div class="col-md-6">
+                                <input class="form-control" name="NewNutritionPlan.MemberId" placeholder="Medlem ID" required />
+                            </div>
+                            <div class="col-md-6">
+                                <input class="form-control" name="NewNutritionPlan.Name" placeholder="Plannavn" required />
+                            </div>
+                            <div class="col-md-6">
+                                <input class="form-control" name="NewNutritionPlan.DailyCalorieTarget" placeholder="Daglige kalorier" type="number" />
+                            </div>
+                            <div class="col-md-6">
+                                <input class="form-control" name="NewNutritionPlan.StartDate" type="date" />
+                            </div>
+                            <div class="col-md-6">
+                                <input class="form-control" name="NewNutritionPlan.EndDate" type="date" />
                             </div>
                         </div>
-                    </div>
-                }
-            </div>
-        </div>
+                        <button class="btn-book mt-2" type="submit">Opret kostplan</button>
+                    </form>
+                </div>
 
-        <div class="tab-pane fade" id="nutritionplans">
-            <div class="card p-3 mb-4">
-                <h5>Soeg kostplaner for traener</h5>
-                <form method="get" action="/personaltrainer/?handler=TrainerPlans">
-                    <div class="row g-2">
-                        <div class="col-md-6">
-                            <input class="form-control" name="trainerId" placeholder="Traener ID" required />
-                        </div>
-                        <div class="col-md-2">
-                            <button class="btn btn-secondary" type="submit">Hent kostplaner</button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-
-            <div class="card p-3 mb-4">
-                <h5>Opret kostplan</h5>
-                <form method="post" action="/personaltrainer/?handler=CreateNutritionPlan">
-                    @Html.AntiForgeryToken()
-                    <div class="row g-2">
-                        <div class="col-md-6">
-                            <input class="form-control" name="NewNutritionPlan.TrainerId" placeholder="Traener ID" required />
-                        </div>
-                        <div class="col-md-6">
-                            <input class="form-control" name="NewNutritionPlan.MemberId" placeholder="Medlem ID" required />
-                        </div>
-                        <div class="col-md-6">
-                            <input class="form-control" name="NewNutritionPlan.Name" placeholder="Plannavn" required />
-                        </div>
-                        <div class="col-md-6">
-                            <input class="form-control" name="NewNutritionPlan.DailyCalorieTarget" placeholder="Daglige kalorier" type="number" />
-                        </div>
-                        <div class="col-md-6">
-                            <input class="form-control" name="NewNutritionPlan.StartDate" type="date" />
-                        </div>
-                        <div class="col-md-6">
-                            <input class="form-control" name="NewNutritionPlan.EndDate" type="date" />
-                        </div>
-                    </div>
-                    <button class="btn btn-primary mt-2" type="submit">Opret</button>
-                </form>
-            </div>
-
-            <div class="row">
-                @foreach (var plan in Model.NutritionPlans)
-                {
-                    <div class="col-md-4 mb-3">
-                        <div class="card h-100">
-                            <div class="card-body">
-                                <h5>@plan.Name</h5>
+                <div class="row">
+                    @foreach (var plan in Model.NutritionPlans)
+                    {
+                        <div class="col-md-4 mb-3">
+                            <div class="glass-card p-4">
+                                <h5 style="color:#1a1a2e;">@plan.Name</h5>
                                 <p><strong>Kalorier:</strong> @plan.DailyCalorieTarget kcal/dag</p>
                                 <p><strong>Start:</strong> @plan.StartDate</p>
                                 <p><strong>Slut:</strong> @plan.EndDate</p>
-                                <span class="badge bg-info">@plan.Status</span>
-                            </div>
-                            <div class="card-footer">
-                                <form method="post" action="/personaltrainer/?handler=DeleteNutritionPlan">
-                                    @Html.AntiForgeryToken()
-                                    <input type="hidden" name="id" value="@plan.Id" />
-                                    <button class="btn btn-sm btn-danger" type="submit">Slet</button>
-                                </form>
+                                <span class="tag">@plan.Status</span>
+                                <div class="mt-3">
+                                    <form method="post" action="/personaltrainer/?handler=DeleteNutritionPlan">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@plan.Id" />
+                                        <button class="btn btn-sm btn-outline-danger" style="border-radius:50px;" type="submit">Slet</button>
+                                    </form>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                }
+                    }
+                </div>
             </div>
-        </div>
 
+        </div>
     </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
 async function bookTrainer(trainerId, trainerName, btn) {
     const memberId   = document.querySelector('.booking-member-id-'   + trainerId).value;
@@ -253,12 +386,12 @@ async function bookTrainer(trainerId, trainerName, btn) {
     }
 
     const payload = {
-        memberId:      memberId,
-        memberName:    memberName,
-        bookingType:   1,
-        trainerId:     trainerId,
-        trainerName:   trainerName,
-        trainingStart: start,
+        memberId:       memberId,
+        memberName:     memberName,
+        bookingType:    1,
+        trainerId:      trainerId,
+        trainerName:    trainerName,
+        trainingStart:  start,
         centreLocation: centre
     };
 
@@ -271,7 +404,7 @@ async function bookTrainer(trainerId, trainerName, btn) {
 
         if (response.ok) {
             btn.textContent = '✓ Booket!';
-            btn.classList.replace('btn-primary', 'btn-success');
+            btn.style.background = 'linear-gradient(135deg, #10B981 0%, #059669 100%)';
             btn.disabled = true;
         } else {
             alert('Booking fejlede — prøv igen');
@@ -281,6 +414,3 @@ async function bookTrainer(trainerId, trainerName, btn) {
     }
 }
 </script>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
