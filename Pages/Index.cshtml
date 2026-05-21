@@ -178,7 +178,7 @@
                             <div class="glass-card p-4">
                                 <div class="d-flex gap-4">
                                     <div class="trainer-avatar">
-                                        @trainer.FirstName[0]
+                                        @(string.IsNullOrEmpty(trainer.FirstName) ? '?' : trainer.FirstName[0])
                                         @if (trainer.IsActive)
                                         {
                                             <div class="online-dot"></div>
