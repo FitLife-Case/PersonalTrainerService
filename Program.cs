@@ -9,7 +9,6 @@ using NLog.Web;
 using System.Text;
 using FitLife.PersonalTrainer.API.Repositories;
 using FitLife.PersonalTrainer.API.Services;
-using Scalar.AspNetCore;
 using VaultSharp;
 using VaultSharp.V1.AuthMethods.Token;
 
@@ -19,16 +18,15 @@ var logger = LogManager.Setup()
 
 try
 {
-    // Tilføj dette som det ALLERFØRSTE i try-blokken
-var vaultUrl = Environment.GetEnvironmentVariable("Vault__Url") 
-               ?? throw new Exception("Vault__Url mangler");
-var vaultToken = Environment.GetEnvironmentVariable("Vault__Token") 
-                 ?? throw new Exception("Vault__Token mangler");
+    var vaultUrl = Environment.GetEnvironmentVariable("Vault__Url")
+                   ?? throw new Exception("Vault__Url mangler");
+    var vaultToken = Environment.GetEnvironmentVariable("Vault__Token")
+                     ?? throw new Exception("Vault__Token mangler");
+
     var builder = WebApplication.CreateBuilder(args);
 
     builder.Logging.ClearProviders();
     builder.Host.UseNLog();
-
 
     var vaultClient = new VaultClient(new VaultClientSettings(vaultUrl, new TokenAuthMethodInfo(vaultToken)));
     var vaultSecrets = await vaultClient.V1.Secrets.KeyValue.V2.ReadSecretAsync(
@@ -91,7 +89,8 @@ var vaultToken = Environment.GetEnvironmentVariable("Vault__Token")
         options.Conventions.ConfigureFilter(new IgnoreAntiforgeryTokenAttribute());
     });
 
-    builder.Services.AddOpenApi();
+    builder.Services.AddEndpointsApiExplorer();
+    builder.Services.AddSwaggerGen();
 
     builder.Services.AddApiVersioning(options =>
     {
@@ -130,12 +129,12 @@ var vaultToken = Environment.GetEnvironmentVariable("Vault__Token")
 
     app.UsePathBase("/personaltrainer");
 
-    // ── Middleware rækkefølge ──────────────────────────────────────────────
+    app.UseSwagger();
+    app.UseSwaggerUI();
+
     app.UseAuthentication();
     app.UseAuthorization();
 
-    app.MapOpenApi();
-    app.MapScalarApiReference();
     app.MapRazorPages();
     app.MapControllers();
 
