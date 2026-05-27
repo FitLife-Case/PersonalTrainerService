@@ -61,7 +61,7 @@ try
     ValidIssuer = jwtIssuer,
     ValidAudience = jwtAudience,
     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret)),
-    RoleClaimType = "role"
+   
 };
 
             options.Events = new JwtBearerEvents
