@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using FitLife.PersonalTrainer.API.Models;
@@ -5,6 +6,7 @@ using FitLife.PersonalTrainer.API.Services;
 
 namespace FitLife.PersonalTrainer.API.Pages;
 
+[Authorize(Roles = "Admin")]
 public class IndexModel : PageModel
 {
     private readonly ITrainerService _trainerService;
